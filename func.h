@@ -2,6 +2,7 @@
 #include<string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #define MAX 100
 #define MAX_NAME 20
 #define MAX_TELE 20
@@ -11,7 +12,7 @@
 #define UP 2
 #pragma once
 
-//人的信息
+
 typedef struct peo
 {
 	char name[MAX_NAME];
@@ -21,11 +22,6 @@ typedef struct peo
 	int higt;
 }peo;
 
-//typedef struct cont
-//{
-//	peo S[MAX];
-//	int count;
-//}cont;
 typedef struct cont
 {
 	peo* S;
@@ -59,3 +55,5 @@ void rev_cont(cont* parr);
 
 //排序
 void sort_cont(cont* parr);
+//保存文件
+void save_cont(cont*parr);

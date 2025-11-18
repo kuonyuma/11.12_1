@@ -13,53 +13,87 @@ void menu(void)
 
 }
 
-//初始化通讯录函数
-//void init_cont(cont* parr)
-//{
-//	memset(parr->S,0,sizeof(parr->S));//parr->S等价于sizeof(peo)*MAX
-//	parr->count = 0;
-//}
+void save_cont(cont* parr)
+{
+	FILE* Psave = fopen("kuonyuma.txt", "wb");
+	if (Psave == NULL)
+	{
+		perror("save_fopen");
+		return;
+	}
+	if (fwrite(&parr->count, sizeof(int), 1, Psave) != 1)
+	{
+		perror("buf_conut");
+		fclose(Psave);
+		return;
+	}
+	if (fwrite(&parr->volume, sizeof(int), 1, Psave)!=1)
+	{
+		perror("buf_conut");
+		fclose(Psave);
+		return;
+	}
+	if (fwrite(parr->S, sizeof(peo), parr->count, Psave) != parr->count)
+	{
+		perror("fwrite");
+		fclose(Psave);
+		return;
+	}
+	fclose(Psave);
+	Psave = NULL;
+}
 
 int init_cont(cont* parr)
 {
-	parr->S = (peo*)malloc(INIT*sizeof(peo));
-	if (parr->S==NULL)
+	FILE* pf = fopen("kuonyuma.txt","rb");
+	if (pf == NULL)
 	{
-		printf("错误来源 init_cont:%s",strerror(errno));
+		parr->count = 0;
+		parr->volume = INIT;
+		parr->S = (peo*)calloc(parr->volume, sizeof(peo));
+		if (parr->S == NULL)
+		{
+			perror("init calloc 1");
+			return 1;
+		}
+		return 0;
+	}
+
+	if (fread(&parr->count, sizeof(int), 1, pf)!=1)
+	{
+		perror("init 2");
+		fclose(pf);
 		return 1;
 	}
-	parr->volume = INIT;
-	memset(parr->S, 0, sizeof(peo)*INIT);
-	parr->count = 0;
+	if (fread(&parr->volume, sizeof(int), 1, pf)!=1)
+	{
+		perror("init 3");
+		fclose(pf);
+		return 1;
+	}
+
+	parr->S = (peo*)malloc((size_t)parr->volume * sizeof(peo));
+	if (parr->S == NULL)
+	{
+		perror("init 4");
+		fclose(pf);
+		return 1;
+	}
+	if (parr->count > 0)
+	{
+		if (fread(parr->S, sizeof(peo), parr->count, pf) != parr->count)
+		{
+			perror("init 5");
+			free(parr->S);
+			parr->S = NULL;
+			fclose(pf);
+			return 1;
+		}
+	}
+	fclose(pf);
+	pf = NULL;
 	return 0;
 }
-
-//添加联系人函数
-//void add_cont(cont*parr)
-//{
-//	if (parr->count==MAX)printf("通讯录已满\n");
-//	else 
-//	{
-//		
-//		printf("请输入名字：\n");
-//		scanf("%s", parr->S[parr->count].name);
-//
-//		printf("请输入电话号码：\n");
-//		scanf("%s", parr->S[parr->count].tele);
-//		
-//		printf("请输入身份证号码：\n");
-//		scanf("%s", parr->S[parr->count].id);
-//		
-//		printf("请输入性别：\n");
-//		scanf("%s", parr->S[parr->count].sex);
-//		
-//		printf("请输入身高：\n");
-//		scanf("%20d", &parr->S[parr->count].higt);
-//		
-//		parr->count++;
-//		printf("输入成功\n");
-//	}
-//}
 
 int add_cont(cont* parr)
 {

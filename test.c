@@ -21,9 +21,7 @@ int main()
 			if (add_cont(&arr))
 			{
 				printf("添加联系人失败\n");
-			}
-			
-
+			}	
 			break;
 		case 2:
 			del_cont(&arr);
@@ -41,6 +39,7 @@ int main()
 			sort_cont(&arr);
 			break;
 		case 0:
+			save_cont(&arr);
 			retur(&arr);
 			printf("*******************************\n");
 			printf("********* !!程序退出!! ********\n");
